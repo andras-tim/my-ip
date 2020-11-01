@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def get_ip():
+    data = {
+        'ip': _get_remote_address(),
+    }
+
+    return jsonify(data), 200
+
+
+def _get_remote_address() -> str:
     x_forwarded_for = request.headers.getlist('X-Forwarded-For')
     if x_forwarded_for:
-        remote_ip = x_forwarded_for[0]
-    else:
-        remote_ip = request.remote_addr
+        return x_forwarded_for[0]
 
-    return jsonify(remote_ip), 200
+    return request.remote_addr
 
 
 if __name__ == '__main__':
