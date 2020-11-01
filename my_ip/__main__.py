@@ -5,8 +5,14 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def ip():
-    return jsonify(request.remote_addr)
+def get_ip():
+    x_forwarded_for = request.headers.getlist('X-Forwarded-For')
+    if x_forwarded_for:
+        remote_ip = x_forwarded_for[0]
+    else:
+        remote_ip = request.remote_addr
+
+    return jsonify(remote_ip), 200
 
 
 if __name__ == '__main__':
